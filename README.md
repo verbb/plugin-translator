@@ -11,20 +11,20 @@ Extraction will match the following:
 
 #### PHP
 ```php
-Craft::t('formie', 'Some String');
-Craft::t('formie', 'Some String', ['params' => 'value']);
+Craft::t('plugin-handle', 'Some String');
+Craft::t('plugin-handle', 'Some String', ['params' => 'value']);
 ```
 
 #### HTML/Twig
 ```twig
-'Some String' | t('formie')
-'Some String' | t('formie', { params: 'value' })
-`
+'Some String' | t('plugin-handle')
+'Some String' | t('plugin-handle', { params: 'value' })
+```
 
 #### JS/Vue
 ```js
-Craft.t('formie', 'Some String')
-Craft.t('formie', 'Some String', { params: 'value' })
+Craft.t('plugin-handle', 'Some String')
+Craft.t('plugin-handle', 'Some String', { params: 'value' })
 t('Some String')
 t('Some String', { params: 'value' })
 ```
