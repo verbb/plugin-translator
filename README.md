@@ -1,4 +1,4 @@
-Plugin Translator Module for Craft CMS
+# Plugin Translator Module for Craft CMS
 
 A console command for Craft CMS to generate translations for plugins using Deepl.
 
