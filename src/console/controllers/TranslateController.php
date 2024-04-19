@@ -83,7 +83,7 @@ class TranslateController extends Controller
 
             // Parse translation strings from PHP files. Look for `Craft::t('plugin', 'text')`.
             if ($file->getExtension() === 'php') {
-                preg_match_all('/Craft::t\([\'\"](' . preg_quote($this->pluginHandle) . ')[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(?:,\s*\[[^\]]+\])?\)/', $content, $matches);
+                preg_match_all('/Craft::t\(\s*[\'"]?' . preg_quote($this->pluginHandle, '/') . '[\'"]?\s*,\s*([\'"])(.*?)\\1/s', $content, $matches);
             
                 foreach ($matches[2] as $string) {
                     $translationStrings[$string] = $string;
