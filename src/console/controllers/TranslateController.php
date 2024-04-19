@@ -92,7 +92,7 @@ class TranslateController extends Controller
 
             // Parse translation strings from HTML/Twig files. Look for `'text' | t('plugin')`.
             if ($file->getExtension() === 'twig' || $file->getExtension() === 'html') {
-                preg_match_all('/\{\{\s*\'([^\']+)\'\s*\|\s*t\(\s*\'(' . preg_quote($this->pluginHandle) . ')\'\s*(?:\s*,\s*\{[^}]+\})?\s*\)\s*\}\}/', $content, $matches);
+                preg_match_all('/(?:\{\{\s*)\'([^\']+)\'\s*\|\s*(?:t|translate)\(\s*\'(' . preg_quote($this->pluginHandle) . ')\'\s*(?:\s*,\s*\{[^}]+\})?\s*\)(?:\s*\}\})?/', $content, $matches);
                 
                 foreach ($matches[1] as $string) {
                     $translationStrings[$string] = $string;
