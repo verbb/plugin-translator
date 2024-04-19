@@ -7,7 +7,7 @@ Run via `./craft plugin-translator/translate plugin-handle`
 - Create a `translations/en/plugin-handle.php` file (assumes written language is in English)
 - Create language translations (default 20) using Deepl. Add a `DEEPL_API_KEY` .env variable
 
-Extraction will match the following:
+Extraction will match the following (single or double quotes is fine):
 
 #### PHP
 ```php
