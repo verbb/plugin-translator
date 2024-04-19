@@ -19,6 +19,12 @@ Craft::t('plugin-handle', 'Some String', ['params' => 'value']);
 ```twig
 'Some String' | t('plugin-handle')
 'Some String' | t('plugin-handle', { params: 'value' })
+'Some String' | translate('plugin-handle')
+'Some String' | translate('plugin-handle', { params: 'value' })
+'Some String'|t('plugin-handle')
+'Some String'|t('plugin-handle', { params: 'value' })
+'Some String'|translate('plugin-handle')
+'Some String'|translate('plugin-handle', { params: 'value' })
 ```
 
 #### JS/Vue
