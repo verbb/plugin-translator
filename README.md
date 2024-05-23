@@ -7,11 +7,12 @@ Run via `./craft plugin-translator/translate plugin-handle`
 - Create a `translations/en/plugin-handle.php` file (assumes written language is in English)
 - Create language translations (default 20) using Deepl. Add a `DEEPL_API_KEY` .env variable
 
-Extraction will match the following (single or double quotes is fine):
+Extraction will match the following (single or double quotes is fine for everything):
 
 #### PHP
 ```php
 Craft::t('plugin-handle', 'Some String');
+Craft::t('plugin-handle', 'Some String that\'s escaped');
 Craft::t('plugin-handle', 'Some String', ['params' => 'value']);
 ```
 
@@ -25,6 +26,7 @@ Craft::t('plugin-handle', 'Some String', ['params' => 'value']);
 'Some String'|t('plugin-handle', { params: 'value' })
 'Some String'|translate('plugin-handle')
 'Some String'|translate('plugin-handle', { params: 'value' })
+'Some String that\'s escaped' | t('plugin-handle')
 
 {{ someFunction({
     label: 'Some String' | t('plugin-handle'),
