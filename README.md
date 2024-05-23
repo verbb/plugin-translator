@@ -25,6 +25,10 @@ Craft::t('plugin-handle', 'Some String', ['params' => 'value']);
 'Some String'|t('plugin-handle', { params: 'value' })
 'Some String'|translate('plugin-handle')
 'Some String'|translate('plugin-handle', { params: 'value' })
+
+{{ someFunction({
+    label: 'Some String' | t('plugin-handle'),
+}) }}
 ```
 
 #### JS/Vue
