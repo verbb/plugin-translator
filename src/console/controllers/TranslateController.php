@@ -83,9 +83,18 @@ class TranslateController extends Controller
 
             // Parse translation strings from PHP files. Look for `Craft::t('plugin', 'text')`.
             if ($file->getExtension() === 'php') {
-                preg_match_all('/Craft::t\(\s*[\'"]?' . preg_quote($this->pluginHandle, '/') . '[\'"]?\s*,\s*([\'"])(.*?)\\1/s', $content, $matches);
-            
-                foreach ($matches[2] as $string) {
+                // Use two different patterns to check for strings in Twig. It's far easier to use two patterns to handle single/double quotes
+                // mixed in with each other in the string. The point is the start and end quote needs to match.
+                // We also check if the plugin handle uses single or double quotes for `Craft::t('plugin-handle')/Craft::t("plugin-handle")`
+                $patternSingleQuote = "/Craft::t\(\s*(?:['\"])" . $this->pluginHandle . "['\"],\s*'((?:[^'\\\\]|\\\\')*)'/";
+                $patternDoubleQuote = '/Craft::t\(\s*(?:[\'"])' . $this->pluginHandle . '[\'"],\s*"((?:[^"\\\\]|\\\\")*)"/';
+
+                preg_match_all($patternSingleQuote, $content, $matchesSingleQuote);
+                preg_match_all($patternDoubleQuote, $content, $matchesDoubleQuote);
+
+                $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1]);
+
+                foreach ($matches as $string) {
                     $translationStrings[$string] = $string;
                 }
             }
@@ -94,9 +103,9 @@ class TranslateController extends Controller
             if ($file->getExtension() === 'twig' || $file->getExtension() === 'html') {
                 // Use two different patterns to check for strings in Twig. It's far easier to use two patterns to handle single/double quotes
                 // mixed in with each other in the string. The point is the start and end quote needs to match.
-                // We also check if the plugin handle uses single or double quotes for `t('plugin-handle')`
-                $patternSingleQuote = "/'([^']*)'\s*\|\s*(?:t|translate)\(\s*('" . $this->pluginHandle . "'|\"" . $this->pluginHandle . "\")/";
-                $patternDoubleQuote = '/"([^"]*)"\s*\|\s*(?:t|translate)\(\s*(\'' . $this->pluginHandle . '\'|"' . $this->pluginHandle . '")/';
+                // We also check if the plugin handle uses single or double quotes for `t('plugin-handle')/t("plugin-handle")`
+                $patternSingleQuote = "/'((?:[^'\\\\]|\\\\')*)'\s*\|\s*(?:t|translate)\(\s*(?:['\"])" . $this->pluginHandle . "['\"]/";
+                $patternDoubleQuote = '/"((?:[^"\\\\]|\\\\")*)"\s*\|\s*(?:t|translate)\(\s*(?:[\'"])' . $this->pluginHandle . '[\'"]/';
 
                 preg_match_all($patternSingleQuote, $content, $matchesSingleQuote);
                 preg_match_all($patternDoubleQuote, $content, $matchesDoubleQuote);
