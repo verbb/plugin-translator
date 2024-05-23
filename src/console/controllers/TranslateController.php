@@ -92,9 +92,18 @@ class TranslateController extends Controller
 
             // Parse translation strings from HTML/Twig files. Look for `'text' | t('plugin')`.
             if ($file->getExtension() === 'twig' || $file->getExtension() === 'html') {
-                preg_match_all('/(?:\{\{\s*)[\'\"]([^\'\"]+)[\'\"]\s*\|\s*(?:t|translate)\(\s*[\'\"](' . preg_quote($this->pluginHandle) . ')[\'\"]\s*(?:\s*,\s*\{[^}]+\})?\s*\)(?:\s*\}\})?/', $content, $matches);
-            
-                foreach ($matches[1] as $string) {
+                // Use two different patterns to check for strings in Twig. It's far easier to use two patterns to handle single/double quotes
+                // mixed in with each other in the string. The point is the start and end quote needs to match.
+                // We also check if the plugin handle uses single or double quotes for `t('plugin-handle')`
+                $patternSingleQuote = "/'([^']*)'\s*\|\s*(?:t|translate)\(\s*('" . $this->pluginHandle . "'|\"" . $this->pluginHandle . "\")/";
+                $patternDoubleQuote = '/"([^"]*)"\s*\|\s*(?:t|translate)\(\s*(\'' . $this->pluginHandle . '\'|"' . $this->pluginHandle . '")/';
+
+                preg_match_all($patternSingleQuote, $content, $matchesSingleQuote);
+                preg_match_all($patternDoubleQuote, $content, $matchesDoubleQuote);
+
+                $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1]);
+
+                foreach ($matches as $string) {
                     $translationStrings[$string] = $string;
                 }
             }
