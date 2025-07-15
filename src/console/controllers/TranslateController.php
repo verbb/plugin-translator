@@ -82,7 +82,7 @@ class TranslateController extends Controller
             $content = file_get_contents($file->getPathname());
 
             // Parse translation strings from PHP files. Look for `Craft::t('plugin', 'text')`.
-            if ($file->getExtension() === 'php') {
+            if (in_array($file->getExtension(), ['php'])) {
                 // Use two different patterns to check for strings in Twig. It's far easier to use two patterns to handle single/double quotes
                 // mixed in with each other in the string. The point is the start and end quote needs to match.
                 // We also check if the plugin handle uses single or double quotes for `Craft::t('plugin-handle')/Craft::t("plugin-handle")`
@@ -92,7 +92,10 @@ class TranslateController extends Controller
                 preg_match_all($patternSingleQuote, $content, $matchesSingleQuote);
                 preg_match_all($patternDoubleQuote, $content, $matchesDoubleQuote);
 
-                $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1]);
+                // Parse `Craft.t('plugin', 'text')` or `t('text')` in case there's JS-in-PHP.
+                preg_match_all('/(?:Craft\.)?t\(\s*[\'\"](' . preg_quote($this->pluginHandle) . ')[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(?:,\s*\{[^}]+\})?\)/', $content, $matchesJs);
+
+                $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1], $matchesJs[1]);
 
                 foreach ($matches as $string) {
                     $translationStrings[$string] = $string;
@@ -100,7 +103,7 @@ class TranslateController extends Controller
             }
 
             // Parse translation strings from HTML/Twig files. Look for `'text' | t('plugin')`.
-            if ($file->getExtension() === 'twig' || $file->getExtension() === 'html') {
+            if (in_array($file->getExtension(), ['twig', 'html'])) {
                 // Use two different patterns to check for strings in Twig. It's far easier to use two patterns to handle single/double quotes
                 // mixed in with each other in the string. The point is the start and end quote needs to match.
                 // We also check if the plugin handle uses single or double quotes for `t('plugin-handle')/t("plugin-handle")`
@@ -110,7 +113,10 @@ class TranslateController extends Controller
                 preg_match_all($patternSingleQuote, $content, $matchesSingleQuote);
                 preg_match_all($patternDoubleQuote, $content, $matchesDoubleQuote);
 
-                $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1]);
+                // Parse `Craft.t('plugin', 'text')` or `t('text')` in case there's JS-in-HTML.
+                preg_match_all('/(?:Craft\.)?t\(\s*[\'\"](' . preg_quote($this->pluginHandle) . ')[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(?:,\s*\{[^}]+\})?\)/', $content, $matchesJs);
+
+                $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1], $matchesJs[1]);
 
                 foreach ($matches as $string) {
                     $translationStrings[$string] = $string;
@@ -118,7 +124,7 @@ class TranslateController extends Controller
             }
 
             // Parse translation strings from JavaScript files. Look for `Craft.t('plugin', 'text')` or `t('text')`.
-            if ($file->getExtension() === 'js' || $file->getExtension() === 'vue') {
+            if (in_array($file->getExtension(), ['js', 'ts', 'vue', 'jsx', 'tsx'])) {
                 preg_match_all('/(?:Craft\.)?t\(\s*[\'\"](' . preg_quote($this->pluginHandle) . ')[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(?:,\s*\{[^}]+\})?\)/', $content, $matches);
         
                 foreach ($matches[2] as $string) {
@@ -199,8 +205,6 @@ class TranslateController extends Controller
         $patterns = [
             "/array \(/" => '[',
             "/^([ ]*)\)(,?)$/m" => '$1]$2',
-            "/=>[ ]?\n[ ]+\[/" => '=> [',
-            "/([ ]*)(\'[^\']+\') => ([\[\'])/" => '$1$2 => $3',
         ];
 
         $export = preg_replace(array_keys($patterns), array_values($patterns), $export);
