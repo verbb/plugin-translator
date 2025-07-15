@@ -202,12 +202,9 @@ class TranslateController extends Controller
         // A short-hand array syntax version of `var_export()`.
         $export = var_export($expression, true);
 
-        $patterns = [
-            "/array \(/" => '[',
-            "/^([ ]*)\)(,?)$/m" => '$1]$2',
-        ];
-
-        $export = preg_replace(array_keys($patterns), array_values($patterns), $export);
+        // Replace "array (" with "[", and ")" with "]"
+        $export = preg_replace("/^([ ]*)array \(/m", '$1[', $export);
+        $export = preg_replace("/\)(,?)$/m", ']$1', $export);
 
         if ((bool)$return) {
             return $export;
