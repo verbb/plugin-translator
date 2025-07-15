@@ -92,8 +92,8 @@ class TranslateController extends Controller
                 preg_match_all($patternSingleQuote, $content, $matchesSingleQuote);
                 preg_match_all($patternDoubleQuote, $content, $matchesDoubleQuote);
 
-                // Parse `Craft.t('plugin', 'text')` or `t('text')` in case there's JS-in-PHP.
-                preg_match_all('/(?:Craft\.)?t\(\s*[\'\"](' . preg_quote($this->pluginHandle) . ')[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(?:,\s*\{[^}]+\})?\)/', $content, $matchesJs);
+                // Parse `Craft.t('plugin', 'text')` in case there's JS-in-PHP.
+                preg_match_all('/Craft\.t\(\s*[\'"]' . preg_quote($this->pluginHandle) . '[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*(?:,\s*\{[^}]+\})?\)/', $content, $matchesJs);
 
                 $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1], $matchesJs[1]);
 
@@ -113,8 +113,8 @@ class TranslateController extends Controller
                 preg_match_all($patternSingleQuote, $content, $matchesSingleQuote);
                 preg_match_all($patternDoubleQuote, $content, $matchesDoubleQuote);
 
-                // Parse `Craft.t('plugin', 'text')` or `t('text')` in case there's JS-in-HTML.
-                preg_match_all('/(?:Craft\.)?t\(\s*[\'\"](' . preg_quote($this->pluginHandle) . ')[\'\"]\s*,\s*[\'\"]([^\'\"]+)[\'\"]\s*(?:,\s*\{[^}]+\})?\)/', $content, $matchesJs);
+                // Parse `Craft.t('plugin', 'text')` in case there's JS-in-HTML.
+                preg_match_all('/Craft\.t\(\s*[\'"]' . preg_quote($this->pluginHandle) . '[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*(?:,\s*\{[^}]+\})?\)/', $content, $matchesJs);
 
                 $matches = array_merge($matchesSingleQuote[1], $matchesDoubleQuote[1], $matchesJs[1]);
 
